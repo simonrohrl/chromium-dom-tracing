@@ -15,8 +15,6 @@ Building Chromium is resource-intensive. Ensure your machine meets these minimum
 - **Disk Space:** 120GB+ free space (SSD strongly recommended).
 - **RAM:** 16GB minimum (32GB+ recommended).
 - **OS:** macOs (currently the setup is only targeted for macOs, other OSes will be supported soon)
-- **Python 3:** Required for `depot_tools`.
-
 
 ## 1. Initial Setup (Bootstrap)
 
@@ -33,7 +31,7 @@ chmod +x scripts/*.sh
 
 ### Making Changes
 If you want to modify a new file or change your logic:
-1. Navigate to `chromium_src/src`.
+1. Navigate to `chromium/src`.
 2. Modify the code and test the build.
 3. Once satisfied, generate a new patch file:
    ```bash
@@ -54,7 +52,7 @@ To build the browser, run the build script.
 ```
 
 The compiled binary will be located at:
-`chromium_src/src/out/Default/chrome`
+`chromium/src/out/Default/chrome`
 
 ## 4. Running
 To run the browser, run the start script.
