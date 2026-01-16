@@ -13,8 +13,14 @@ fi
 echo "Applying patches to $CHROMIUM_SRC..."
 for f in "$PATCHES_DIR"/*.patch; do
     if [ -f "$f" ]; then
-        echo "Applying $(basename "$f")"
-        git -C "$CHROMIUM_SRC" apply "$f"
+        patch_name="$(basename "$f")"
+        # Check if patch is already applied by testing if it can be reversed
+        if git -C "$CHROMIUM_SRC" apply --reverse --check "$f" 2>/dev/null; then
+            echo "Skipping $patch_name (already applied)"
+        else
+            echo "Applying $patch_name"
+            git -C "$CHROMIUM_SRC" apply "$f"
+        fi
     fi
 done
 
