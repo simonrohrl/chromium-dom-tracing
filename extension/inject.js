@@ -1,9 +1,12 @@
 // This script runs at document_start on every page
 (function() {
+  // Generate unique ID to avoid conflicts
+  const uniqueId = '__dt_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
   function init() {
     // Create the target element
     const target = document.createElement('div');
-    target.id = 'dom-tracing-target';
+    target.id = uniqueId;
     target.style.cssText = `
       position: fixed;
       top: 10px;
