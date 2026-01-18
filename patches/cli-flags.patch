@@ -1,22 +1,49 @@
 diff --git a/chrome/app/chrome_main_delegate.cc b/chrome/app/chrome_main_delegate.cc
-index 1cbcce0303..d3281d414b 100644
+index 1cbcce0303..d3c916fa0d 100644
 --- a/chrome/app/chrome_main_delegate.cc
 +++ b/chrome/app/chrome_main_delegate.cc
-@@ -1063,6 +1063,32 @@ std::optional<int> ChromeMainDelegate::BasicStartupComplete() {
+@@ -10,6 +10,7 @@
+ #include <variant>
+ 
+ #include "base/base_paths.h"
++#include "base/base_switches.h"
+ #include "base/check.h"
+ #include "base/command_line.h"
+ #include "base/compiler_specific.h"
+@@ -75,12 +76,14 @@
+ #include "components/memory_system/initializer.h"
+ #include "components/memory_system/parameters.h"
+ #include "components/metrics/persistent_histograms.h"
++#include "components/os_crypt/sync/os_crypt_switches.h"
+ #include "components/sampling_profiler/thread_profiler.h"
+ #include "components/startup_metric_utils/common/startup_metric_utils.h"
+ #include "components/variations/service/variations_network_clock.h"
+ #include "components/variations/variations_ids_provider.h"
+ #include "components/version_info/channel.h"
+ #include "components/version_info/version_info.h"
++#include "components/viz/common/switches.h"
+ #include "content/public/app/initialize_mojo_core.h"
+ #include "content/public/common/content_client.h"
+ #include "content/public/common/content_constants.h"
+@@ -1063,6 +1066,36 @@ std::optional<int> ChromeMainDelegate::BasicStartupComplete() {
    ash::BootTimesRecorder::Get()->SaveChromeMainStats();
  #endif
  
 +  // Append default flags so users don't need to pass them on the CLI.
 +  base::CommandLine* cmd = base::CommandLine::ForCurrentProcess();
 +
-+  if(!cmd->HasSwitch(::switches::kRunAllCompositorStagesBeforeDraw))
-+    cmd->AppendSwitch(::switches::kRunAllCompositorStagesBeforeDraw)
++  if (!cmd->HasSwitch(switches::kRunAllCompositorStagesBeforeDraw))
++    cmd->AppendSwitch(switches::kRunAllCompositorStagesBeforeDraw);
 +
-+  if (!cmd->HasSwitch(::switches::kEnableLogging))
-+    cmd->AppendSwitch(::switches::kEnableLogging);
++  if (!cmd->HasSwitch(switches::kEnableLogging))
++    cmd->AppendSwitch(switches::kEnableLogging);
 +
-+  if (!cmd->HasSwitch(::switches::kV))
-+    cmd->AppendSwitchASCII(::switches::kV, "0");
++  if (!cmd->HasSwitch(switches::kV))
++    cmd->AppendSwitchASCII(switches::kV, "0");
++
++  // Enable verbose logging for layer tree and property trees on every commit
++  if (!cmd->HasSwitch(switches::kVModule))
++    cmd->AppendSwitchASCII(switches::kVModule, "layer_tree_host_impl=3");
 +
 +#if BUILDFLAG(IS_MAC)
 +  if (!cmd->HasSwitch(os_crypt::switches::kUseMockKeychain))
@@ -24,12 +51,12 @@ index 1cbcce0303..d3281d414b 100644
 +#endif
 +
 +  std::string disable_features =
-+      cmd->GetSwitchValueASCII(::switches::kDisableFeatures);
++      cmd->GetSwitchValueASCII(switches::kDisableFeatures);
 +  if (disable_features.find("DialMediaRouteProvider") == std::string::npos) {
 +    if (!disable_features.empty())
 +      disable_features += ",";
 +    disable_features += "DialMediaRouteProvider";
-+    cmd->AppendSwitchASCII(::switches::kDisableFeatures, disable_features);
++    cmd->AppendSwitchASCII(switches::kDisableFeatures, disable_features);
 +  }
 +
    const base::CommandLine& command_line =
